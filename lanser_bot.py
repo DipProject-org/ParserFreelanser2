@@ -2,7 +2,7 @@ import logging
 import settings
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, RegexHandler, ConversationHandler
-from telegram import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
+from telegram import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove, InlineKeyboardMarkup, InlineKeyboardButton
 
 import sqlalchemy
 
@@ -32,7 +32,11 @@ def get_keyboard():
 		[['Получить 5 заказов']], resize_keyboard = True)
 	return my_keyboard
 
-
+def card_link_kb(url):
+    button0 = InlineKeyboardButton(text="Посмотреть на сайте", url=url)
+    buttons_list = [[button0]]
+    keyboard = InlineKeyboardMarkup(buttons_list)
+    return keyboard 
 
 def zapros_start(bot, update, user_data):
 	print('in def zapros_start')
@@ -55,7 +59,8 @@ def zapros_get_skill(bot, update, user_data):
 				pay_metod = '\tСпособ оплаты подтвержден'
 			else: 
 				pay_metod = ''
-			update.message.reply_text('\nЗадание: {0}\nОплата:{5}{6}\nАктивно еще {1}.\n\nОписание: {2}\n\nТребуемые навыки{3}\n\nПредложений от фрилансеров:{7}\n\nСтраница заказа:  {4}\n\n'.format(card['title'],card['time'],card['description'],card['list_skill'],card['link'],card['price'],pay_metod,card['bids']), reply_markup= get_keyboard())
+			url = card['link']
+			update.message.reply_text('\nЗадание: {0}\nОплата:{4}{5}\nАктивно еще {1}.\n\nОписание: {2}\n\nТребуемые навыки{3}\n\nПредложений от фрилансеров:{6}\n\nСтраница заказа:  {4}\n\n'.format(card['title'],card['time'],card['description'],card['list_skill'],card['price'],pay_metod,card['bids']), reply_markup= card_link_kb(url))
 		return ConversationHandler.END
 
 	except AttributeError:
