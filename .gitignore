@@ -1,8 +1,10 @@
 __pycache__
 env
+Trash
 not for net
 *.log
 *.db
 proxies.txt
 settings.py
 Desktop.ini
+
