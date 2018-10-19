@@ -1,4 +1,5 @@
 import logging
+import requests
 
 import sqlalchemy
 from fill_db.skill_list_sql import db_session, Skillbase
@@ -9,6 +10,7 @@ from random import uniform, choice
 from time import sleep
 
 from external_connections.connections_utils import get_proxy, get_html
+
 
 def get_five_cards(link):
 	logging.info('Запуск get_five_cards')
@@ -28,10 +30,8 @@ def get_five_cards(link):
 	cards = find_works_card(html)
 	return cards
 
+
 def find_works_card(html):		#получаем ссылку, число работ
-	#bonus = ['local=true','&','fixed=true','fixed_min=','fixed_max=',
-	#'contest=true','contest_min=','contest_max=','hourly=true','languages='
-	#,'hourly_duration=']#1-6
 	cards = []
 	card_list = []
 	x=0
@@ -49,6 +49,7 @@ def find_works_card(html):		#получаем ссылку, число рабо�
 		if x == 5:
 			return cards
 	return cards
+
 
 def parser(block):
 	skill_tags = []

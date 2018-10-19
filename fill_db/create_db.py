@@ -7,9 +7,9 @@ import datetime
 from fill_db.skill_list_sql import create_base
 from fill_db.skill_list_find_links import find_links
 
-#import sys
-#import os
-#sys.path.append(os.path.dirname(os.getcwd()))
+import sys
+import os
+sys.path.append(os.path.dirname(__file__) + "/../parserfrilanse/")
 from external_connections.connections_utils import get_proxy, get_html
 
 def create_db():

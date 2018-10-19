@@ -6,14 +6,18 @@ from telegram import (ReplyKeyboardMarkup,
 
 import sqlalchemy
 
-from create_db import create_db
-
-from fill_db.skill_list_sql import db_session, Skillbase
-from utils import get_five_cards
-from message_texts import (
+from bot.message_texts import (
 	PAY_MESSAGE, GREET_USER, KEYBOARD_BUTTON, INLINE_BUTTON,
 	 ECHO, START, VERIFIED, CORRECTOR
 	)
+
+import sys
+import os
+sys.path.append(os.path.dirname(__file__) + "/../parserfrilanse/")
+
+from fill_db.create_db import create_db
+from fill_db.skill_list_sql import db_session, Skillbase
+from utils import get_five_cards
 
 def get_keyboard():
 	my_keyboard = ReplyKeyboardMarkup(

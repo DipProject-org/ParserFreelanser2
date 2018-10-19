@@ -5,13 +5,13 @@ from telegram.ext import (Updater, CommandHandler,
 	MessageHandler, Filters, RegexHandler,
 	 ConversationHandler)
 
-from talk_with_user import (
+from bot.talk_with_user import (
 	greet_user, talk_to_me, query_to_base_start,
 	 query_to_base_get_skill, get_keyboard, card_link_kb
 	)
 
 #Настройки лога
-logging.basicConfig(format= '%(asctime)s - %(name)s - %(levelname)s - %(message)s', level = logging.INFO, filename = 'bot.log')
+logging.basicConfig(format= '%(asctime)s - %(name)s - %(levelname)s - %(message)s', level = logging.INFO, filename = 'logs/bot.log')
 
 def main():
 	mybot = Updater(settings.API_KEY,
