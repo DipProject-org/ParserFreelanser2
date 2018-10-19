@@ -15,8 +15,8 @@ import sys
 import os
 sys.path.append(os.path.dirname(__file__) + "/../parserfrilanse/")
 
-from fill_db.create_db import create_db
-from fill_db.skill_list_sql import db_session, Skillbase
+from setup_db.create_db import create_db
+from setup_db.skill_list_sql import db_session, Skillbase
 from utils import get_five_cards
 
 def get_keyboard():

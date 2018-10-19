@@ -4,8 +4,8 @@ from random import choice
 
 import datetime
 
-from fill_db.skill_list_sql import create_base
-from fill_db.skill_list_find_links import find_links
+from setup_db.skill_list_sql import create_base
+from setup_db.skill_list_find_links import find_links
 
 import sys
 import os

@@ -5,7 +5,7 @@ import re
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker, scoped_session
 
-from fill_db.skill_list_sql import db_session, Skillbase
+from setup_db.skill_list_sql import db_session, Skillbase
 
 
 #парсим https://www.freelancer.com/job/

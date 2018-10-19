@@ -2,7 +2,7 @@ import logging
 import requests
 
 import sqlalchemy
-from fill_db.skill_list_sql import db_session, Skillbase
+from setup_db.skill_list_sql import db_session, Skillbase
 
 from bs4 import BeautifulSoup
 import re
