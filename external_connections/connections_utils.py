@@ -1,7 +1,7 @@
 import logging
+import requests
 
 import datetime
-import requests
 
 def get_new_proxy(date_this_request):
 	proxy_list = []

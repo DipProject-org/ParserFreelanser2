@@ -1,10 +1,10 @@
-import logging
-import settings
-
 from telegram.ext import (Updater, CommandHandler, 
 	MessageHandler, Filters, RegexHandler,
 	 ConversationHandler)
 
+import logging
+
+import settings
 from bot.talk_with_user import (
 	greet_user, talk_to_me, query_to_base_start,
 	 query_to_base_get_skill, get_keyboard, card_link_kb

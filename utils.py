@@ -1,14 +1,13 @@
 import logging
 import requests
-
 import sqlalchemy
-from setup_db.skill_list_sql import db_session, Skillbase
-
-from bs4 import BeautifulSoup
 import re
+from bs4 import BeautifulSoup
+
 from random import uniform, choice
 from time import sleep
 
+from setup_db.skill_list_sql import db_session, Skillbase
 from external_connections.connections_utils import get_proxy, get_html
 
 
@@ -60,7 +59,6 @@ def parser(block):
 
 	#Заявлено времени назад
 	time = block.find('span', class_='JobSearchCard-primary-heading-Days').contents[0]
-	time = time.split(' ')
 
 	#Описание
 	description = block.find('p', class_='JobSearchCard-primary-description').contents[0]
@@ -75,7 +73,12 @@ def parser(block):
 		skill = skill.split('/">')[-1]
 		skill = skill.replace('</a>','')
 		skill_tags.append(skill)
-	list_skill = skill_tags
+
+	list_skill = str(skill_tags)
+	list_skill = list_skill.replace("['","")
+	list_skill = list_skill.replace("']","")
+	list_skill = list_skill.replace("', '",", ")
+
 	skill_tags = []
 
 	featured = block.find('div', class_="JobSearchCard-primary-promotion")

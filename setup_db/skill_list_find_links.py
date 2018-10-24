@@ -1,12 +1,10 @@
 import logging
-from bs4 import BeautifulSoup
 import re
-
 import sqlalchemy
+from bs4 import BeautifulSoup
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 from setup_db.skill_list_sql import db_session, Skillbase
-
 
 #парсим https://www.freelancer.com/job/
 def find_links(html):

@@ -2,11 +2,12 @@ __pycache__
 env
 Trash
 not for net
-Прототипы под api
+Prototype for api
 *.log
 *.db
 proxies.txt
 settings.py
 Desktop.ini
+.gitignore
 
 
