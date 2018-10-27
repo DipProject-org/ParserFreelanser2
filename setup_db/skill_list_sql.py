@@ -29,3 +29,4 @@ class Skillbase(Base):
 
 def create_base():
 	Base.metadata.create_all(bind=engine)
+

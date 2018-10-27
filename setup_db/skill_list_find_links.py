@@ -51,3 +51,4 @@ def find_links(html):
 		db_session.add(skill_db)
 	db_session.commit()
 	
+	

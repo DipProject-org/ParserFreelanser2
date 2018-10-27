@@ -4,12 +4,17 @@ from telegram.ext import (Updater, CommandHandler,
 
 import logging
 
+import os
+from setup_db.create_db import create_db
 import settings
 from bot.talk_with_user import (
 	greet_user, talk_to_me, query_to_base_start,
 	 query_to_base_get_skill, get_keyboard, card_link_kb
 	)
 
+#проверка на наличие папки logs
+if not os.path.exists("logs"):
+	os.mkdir("logs")
 #Настройки лога
 logging.basicConfig(format= '%(asctime)s - %(name)s - %(levelname)s - %(message)s', level = logging.INFO, filename = 'logs/bot.log')
 
@@ -18,7 +23,11 @@ def main():
 		request_kwargs=settings.PROXY)
 
 	logging.info('бот запускается')
-	
+
+	#проверка на наличие файла базы и скрипт на его создание.
+	if (os.stat("skillbase.db")).st_size < 100.0:
+		create_db()
+
 	dp = mybot.dispatcher
 	dp.add_handler(CommandHandler("start", greet_user, pass_user_data=True))
 	query_to_base = ConversationHandler(
@@ -37,3 +46,4 @@ def main():
 
 if __name__ == '__main__':
 	main()
+

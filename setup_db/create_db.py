@@ -6,7 +6,7 @@ import os
 import datetime
 from random import choice
 
-sys.path.append(os.path.dirname(__file__) + "/../parserfrilanse/")
+sys.path.append(os.path.dirname(__file__) + "/..")
 from external_connections.connections_utils import get_proxy, get_html
 from setup_db.skill_list_sql import create_base
 from setup_db.skill_list_find_links import find_links
@@ -21,7 +21,7 @@ def create_db():
 		try:
 			html = get_html(url,proxy)	#'запрашивает страницу притворяясь человеком'
 			break
-		except request.exceptions.RequestExceptions as e:
+		except requests.exceptions.RequestException as e:
 			logging.info(e)
 
 	create_base()

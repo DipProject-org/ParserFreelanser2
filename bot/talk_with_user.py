@@ -2,6 +2,8 @@ from telegram import (
 	ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove, 
 	InlineKeyboardMarkup, InlineKeyboardButton
 	)
+from telegram.ext import (ConversationHandler)
+
 import logging
 import sqlalchemy
 
@@ -23,9 +25,6 @@ def query_to_base_start(bot, update, user_data):
 		GREET_USER.format(update.message.chat.first_name),
 		reply_markup = ReplyKeyboardRemove()
 		)
-	#проверка на наличие файла базы и скрипт на его создание.
-	if not os.path.exists("skillbase.db"):
-		create_db()
 	return 'skill'
 
 
@@ -89,3 +88,4 @@ def talk_to_me(bot, update, user_data):
 
 	logging.info("User: %s, Chat id: %s, Message: %s", update.message.chat.username, 
 			update.message.chat.id, update.message.text)
+

@@ -69,3 +69,4 @@ def get_html(url, proxy = None, useragent = None):
 
 	logging.info('притворился')
 	return r.text
+

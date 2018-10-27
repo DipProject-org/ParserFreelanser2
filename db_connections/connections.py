@@ -39,5 +39,5 @@ class DataBaseSelector():
 		user_tip = user_tip.replace("['","")
 		user_tip = user_tip.replace("']","")
 		user_tip = user_tip.replace("', '","\n")
-
 		return user_tip
+

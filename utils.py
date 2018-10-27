@@ -15,6 +15,7 @@ def get_five_cards(link):
 	logging.info('Запуск get_five_cards')
 	url = link
 	proxies = get_proxy()
+	Y= 1
 	while True: 	#Повторяй цикл до ответа от прокси сервера
 		sleep(uniform(3,6))
 		proxy = {'http':'http://'+ choice(proxies)}
@@ -23,7 +24,8 @@ def get_five_cards(link):
 			break
 		except requests.exceptions.RequestException as e:
 			logging.info(e)
-			logging.info('________________')
+			Y+=1
+			logging.info('Попытка №{}'.format(Y))
 
 	logging.info('Передаем стр в парсер')
 	cards = find_works_card(html)
@@ -128,3 +130,4 @@ def parser(block):
 	card = {'title':title, 'time':time, 'description':description, 'list_skill':list_skill, 'link':link, 'price':price, 'verified':verified, 'bids':bids}
 	
 	return card
+	
