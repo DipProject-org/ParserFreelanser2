@@ -25,8 +25,19 @@ class Skillbase(Base):
 		self.skill_words=skill_words
 
 	def __repr__(self):
-		return 'По навыку {} найдено {} предложений!>'.format(self.skill, self.work_count)
+		return 'По навыку {} найдено {} предложений!'.format(self.skill, 
+			self.work_count)
 
 def create_base():
 	Base.metadata.create_all(bind=engine)
+
+def add_skill(skill):
+	skill_db = Skillbase(
+		skill['skill'], 
+		skill['link'], 
+		skill['work_count'], 
+		skill['skill_words']
+		)
+	db_session.add(skill_db)
+	db_session.commit()
 

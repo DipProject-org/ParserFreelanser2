@@ -3,31 +3,20 @@ import requests
 
 import sys
 import os
-import datetime
-from random import choice
 
 sys.path.append(os.path.dirname(__file__) + "/..")
-from external_connections.connections_utils import get_proxy, get_html
+from external_connections.connections_utils import use_proxy
 from setup_db.skill_list_sql import create_base
 from setup_db.skill_list_find_links import find_links
 
 def create_db():
-	logging.info('Запуск')
+	logging.info('Создание базы')
 	url = 'https://www.freelancer.com/job/'
-	proxies = get_proxy()
-
-	while True: #Повторяй цикл до ответа от прокси сервера
-		proxy = {'http':'http://'+ choice(proxies)}
-		try:
-			html = get_html(url,proxy)	#'запрашивает страницу притворяясь человеком'
-			break
-		except requests.exceptions.RequestException as e:
-			logging.info(e)
-
+	html = use_proxy(url)
 	create_base()
 	find_links(html)
-	print('Данные занесены в базу')
+	logging.info('Данные занесены в базу')
 
 if __name__ == '__main__':
 	create_db()
-	
+

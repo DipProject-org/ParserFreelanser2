@@ -1,34 +1,18 @@
 import logging
-import requests
 import sqlalchemy
 import re
 from bs4 import BeautifulSoup
 
-from random import uniform, choice
-from time import sleep
-
 from setup_db.skill_list_sql import db_session, Skillbase
-from external_connections.connections_utils import get_proxy, get_html
+from external_connections.connections_utils import use_proxy
+from settings import card_cap
 
-
-def get_five_cards(link):
-	logging.info('Запуск get_five_cards')
-	url = link
-	proxies = get_proxy()
-	Y= 1
-	while True: 	#Повторяй цикл до ответа от прокси сервера
-		sleep(uniform(3,6))
-		proxy = {'http':'http://'+ choice(proxies)}
-		try:
-			html = get_html(url,proxy)		#'запрашивает страницу притворяясь человеком'
-			break
-		except requests.exceptions.RequestException as e:
-			logging.info(e)
-			Y+=1
-			logging.info('Попытка №{}'.format(Y))
-
+def get_cards(link):
+	logging.info('Запуск get_cards')
+	html = use_proxy(link)
 	logging.info('Передаем стр в парсер')
 	cards = find_works_card(html)
+	logging.info('Передано {} карт'.format(len(cards)))
 	return cards
 
 
@@ -39,33 +23,47 @@ def find_works_card(html):		#получаем ссылку, число рабо�
 	
 	soup = BeautifulSoup(html,'lxml')
 	#Находим лист проектов
-	text_block1 = soup.find('div', id= "project-list", class_="JobSearchCard-list")
+	text_block1 = soup.find(
+		'div', id= "project-list", class_="JobSearchCard-list"
+		)
 	#Находим карточки проектов
-	text_block1 = text_block1.find_all('div', class_= "JobSearchCard-item-inner")
+	text_block1 = text_block1.find_all(
+		'div', class_= "JobSearchCard-item-inner"
+		)
 	#Драим по каждой карточке
 	for block in text_block1:
-		card = parser(block)
+		card = parse(block)
 		cards.append(card)
 		x+=1
-		if x == 5:
+		if x == card_cap:
 			return cards
 	return cards
 
 
-def parser(block):
+def serialize_card(**kwargs):
+	return kwargs
+
+def normalize_str(target_str):
+	target_str = target_str.replace('  ','')
+	target_str = target_str.replace('\n','')
+	return target_str
+
+def parse(block):
 	skill_tags = []
 	#Находим название карточки
-	title = block.find('a', class_='JobSearchCard-primary-heading-link').contents[0]
-	title = title.replace('  ','')
-	title = title.replace('\n','')
+	title = normalize_str(block.find(
+		'a', class_='JobSearchCard-primary-heading-link'
+		).contents[0])
 
 	#Заявлено времени назад
-	time = block.find('span', class_='JobSearchCard-primary-heading-Days').contents[0]
+	time = block.find(
+		'span', class_='JobSearchCard-primary-heading-Days'
+		).contents[0]
 
 	#Описание
-	description = block.find('p', class_='JobSearchCard-primary-description').contents[0]
-	description= description.replace('  ','')
-	description = description.replace('\n','')
+	description = normalize_str(block.find(
+		'p', class_='JobSearchCard-primary-description'
+		).contents[0])
 
 	#Список навыков
 	skills_block = block.find('div', class_='JobSearchCard-primary-tags')
@@ -83,24 +81,57 @@ def parser(block):
 
 	skill_tags = []
 
-	featured = block.find('div', class_="JobSearchCard-primary-promotion")
-	featured= 'Featured' in str(featured)
-
+	#Требуется ли логин.
 	need_login = block.find('p', class_='JobSearchCard-primary-description')
 	need_login = 'Login</a> to see details.' in str(need_login)
 
-	if need_login == True:
+	#Верифицировано или нет.
+	verified = block.find(
+		'div', class_="JobSearchCard-primary-heading-status Tooltip--top"
+		)
+	verified = 'VERIFIED' in str(verified)
+
+	if need_login:
 		price ='0'
 		link = 'Error 404'
 		bids ='0'
 		description = 'Need Login for description'
+		return serialize_card(
+			title=title, 
+			time=time, 
+			description=description, 
+			list_skill=list_skill, 
+			link=link, 
+			price=price, 
+			verified=verified, 
+			bids=bids
+			)
+
+	#Карточка активна или только анонсирована.
+	featured = block.find('div', class_="JobSearchCard-primary-promotion")
+	featured= 'Featured' in str(featured)
+
+	if featured:
+		price = '0'
+		link = 'Error 404'
+		bids = '0'
+		return serialize_card(
+			title=title, 
+			time=time, 
+			description=description, 
+			list_skill=list_skill, 
+			link=link, 
+			price=price, 
+			verified=verified, 
+			bids=bids
+			)
 
 	if featured == False and need_login == False:
 		#Цена работы
-		price_block = block.find('div', class_="JobSearchCard-secondary-price").contents[0]
-		price= price_block.replace('  ','')
-		price = price.replace('\n','')
-		price = price.replace('/ hr','per hour')
+		price_block = normalize_str(block.find(
+			'div', class_="JobSearchCard-secondary-price"
+			).contents[0])
+		price = price_block.replace('/ hr','per hour')
 
 		#Ссылка на работу
 		contest = block.find('span', class_="Icon JobSearchCard-primary-heading-Icon")
@@ -117,17 +148,15 @@ def parser(block):
 		#Количество заявок
 		bids = block.find('div', class_='JobSearchCard-secondary-entry').contents[0]
 		bids = bids.split(' ')[0]
-
-	#Верифицировано или нет
-	verified = block.find('div', class_="JobSearchCard-primary-heading-status Tooltip--top")
-	verified = 'VERIFIED' in str(verified)
-
-	if featured == True:
-		price = '0'
-		link = 'Error 404'
-		bids = '0'
 		
-	card = {'title':title, 'time':time, 'description':description, 'list_skill':list_skill, 'link':link, 'price':price, 'verified':verified, 'bids':bids}
-	
-	return card
-	
+	return serialize_card(
+		title=title, 
+		time=time, 
+		description=description, 
+		list_skill=list_skill, 
+		link=link, 
+		price=price, 
+		verified=verified, 
+		bids=bids
+		)
+

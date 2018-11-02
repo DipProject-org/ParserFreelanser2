@@ -14,16 +14,16 @@ sys.path.append(os.path.dirname(__file__) + "/../parserfrilanse/")
 
 from setup_db.create_db import create_db
 from bot.message_texts import (
-	KEYBOARD_BUTTON, INLINE_BUTTON, ECHO, START, GREET_USER, VERIFIED, PAY_MESSAGE, CORRECTOR
+	KEYBOARD_BUTTON, INLINE_BUTTON, ECHO, START, GREET_USER, VERIFIED, 
+	PAY_MESSAGE, CORRECTOR, CORRECTOR_NONE
 	)
 from db_connections.connections import DataBaseSelector
-from utils import get_five_cards
+from utils import get_cards
 
 def query_to_base_start(bot, update, user_data):
 	logging.info('in def query_to_base_start')
 	update.message.reply_text(
-		GREET_USER.format(update.message.chat.first_name),
-		reply_markup = ReplyKeyboardRemove()
+		GREET_USER, reply_markup = ReplyKeyboardRemove()
 		)
 	return 'skill'
 
@@ -32,6 +32,7 @@ def query_to_base_get_skill(bot, update, user_data):
 	"""Прогоняем запрос пользователя по базе, запускает парсер и выводит ответы в телеграмм"""
 	logging.info('in def query_to_base_get_skill')
 	user_skill = update.message.text
+	none_tip = []
 	try:
 		selector = DataBaseSelector(user_skill)
 		link = selector.query_to_base_skill()
@@ -41,12 +42,16 @@ def query_to_base_get_skill(bot, update, user_data):
 		corrector = DataBaseSelector(user_skill)
 		user_tip = corrector.find_in_key_words()
 		logging.info(user_tip)
-		update.message.reply_text(CORRECTOR.format(user_tip), reply_markup= get_keyboard())
+		if user_tip == '[]':
+			message = CORRECTOR_NONE
+		else:
+			message = CORRECTOR.format(user_tip)
+		update.message.reply_text(message, reply_markup= get_keyboard())
 		return 'skill'
 	
 	
 	#Пускаем парсер по ссылке
-	cards = get_five_cards(link)
+	cards = get_cards(link)
 	for card in cards:
 		if card['verified'] == True:
 			pay_metod = VERIFIED
@@ -76,7 +81,7 @@ def card_link_kb(url):
 
 
 def greet_user(bot,update,user_data):
-	text = START.format(update.message.chat.first_name)
+	text = START.format((update.message.chat.first_name))
 	update.message.reply_text(text, reply_markup= get_keyboard())
 
 
@@ -84,7 +89,7 @@ def talk_to_me(bot, update, user_data):
 	logging.info('talk_to_me вход')
 	#принимаем текст от пользователя
 	user_text = ECHO.format(
-		update.message.chat.first_name, update.message.text)
+		(update.message.chat.first_name), update.message.text)
 
 	logging.info("User: %s, Chat id: %s, Message: %s", update.message.chat.username, 
 			update.message.chat.id, update.message.text)

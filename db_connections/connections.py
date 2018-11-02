@@ -5,11 +5,8 @@ import logging
 sys.path.append(os.path.dirname(__file__) + "/../parserfrilanse/")
 
 from setup_db.skill_list_sql import db_session, Skillbase
-#настройки
 
-#класс
 class DataBaseSelector():
-	"""docstring for DataBaseSelector"""
 
 	def __init__(self, user_skill):
 		u = Skillbase
