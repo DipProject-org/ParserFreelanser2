@@ -9,7 +9,7 @@ from setup_db.create_db import create_db
 import settings
 from bot.talk_with_user import (
 	greet_user, talk_to_me, query_to_base_start,
-	 query_to_base_get_skill, get_keyboard, card_link_kb
+	 query_to_base_get_skill, get_keyboard, card_link_kb, last_skill
 	)
 
 #проверка на наличие папки logs
@@ -33,6 +33,7 @@ def main():
 
 	dp = mybot.dispatcher
 	dp.add_handler(CommandHandler("start", greet_user, pass_user_data=True))
+	dp.add_handler(RegexHandler('^(last_skill)$', last_skill))
 	query_to_base = ConversationHandler(
 		entry_points = [
 		RegexHandler('^Получить 5 заказов$',

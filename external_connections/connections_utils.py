@@ -80,25 +80,25 @@ def get_html(url, proxy = None):
 	except TimeoutError as e:
 		logging.info(e)
 		sleep(uniform(3,6))
-		use_proxy()
-	except ConnectionError as e:
+		use_proxy(url)
+	except requests.exceptions.ConnectionError as e:
 		logging.info(e)
 		sleep(uniform(3,6))
-		use_proxy()
-		
+		use_proxy(url)
+
 	if result.status_code == 200 and result!=None:
 		logging.info('притворился')
 		return result.text
 	elif result.status_code == 404:
 		logging.info("404 status_code")
 		sleep(uniform(3,6))
-		use_proxy()
+		use_proxy(url)
 	elif result.status_code == 403:
 		logging.info("403 status_code")
 		sleep(uniform(3,6))
-		use_proxy()
+		use_proxy(url)
 	elif result.status_code == 500:
 		logging.info("500 status_code")
 		sleep(uniform(3,6))
-		use_proxy()
+		use_proxy(url)
 

@@ -2,7 +2,7 @@ from telegram import (
 	ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove, 
 	InlineKeyboardMarkup, InlineKeyboardButton
 	)
-from telegram.ext import (ConversationHandler)
+from telegram.ext import ConversationHandler
 
 import logging
 import sqlalchemy
@@ -26,6 +26,37 @@ def query_to_base_start(bot, update, user_data):
 		GREET_USER, reply_markup = ReplyKeyboardRemove()
 		)
 	return 'skill'
+
+def last_skill(bot, update):
+	print("last_skill")
+	try:
+		user_questions = open('user_questions.txt').read()
+		user_questions = user_questions.split(":")
+		chat_id = user_questions[0]
+		questions = user_questions[1].strip().replace("'","")
+
+		if chat_id == str(update.message.chat.id):
+			selector = DataBaseSelector(questions)
+			link = selector.query_to_base_skill()
+			cards = get_cards(link)
+			for card in cards:
+				if card['verified'] == True:
+					pay_metod = VERIFIED
+				else: 
+					pay_metod = ''
+				url = card['link']
+				update.message.reply_text(PAY_MESSAGE.format(
+					title = card['title'], 
+					time = card['time'],
+					description = card['description'], 
+					list_skill = card['list_skill'], 
+					price = card['price'], 
+					pay_metod = pay_metod, 
+					bids = card['bids']),
+					reply_markup= card_link_kb(url)
+					)
+	except FileNotFoundError:
+		pass
 
 
 def query_to_base_get_skill(bot, update, user_data):
@@ -59,17 +90,29 @@ def query_to_base_get_skill(bot, update, user_data):
 			pay_metod = ''
 		url = card['link']
 		update.message.reply_text(PAY_MESSAGE.format(
-			title = card['title'], time = card['time'],
-			description = card['description'], list_skill = card['list_skill'], 
-			price = card['price'], pay_metod = pay_metod, bids = card['bids']),
+			title = card['title'], 
+			time = card['time'],
+			description = card['description'], 
+			list_skill = card['list_skill'], 
+			price = card['price'], 
+			pay_metod = pay_metod, 
+			bids = card['bids']),
 			reply_markup= card_link_kb(url)
 			)
+	###записываем пользователя и запрос
+	chat_id = update.message.chat.id
+	chat_text = update.message.text
+	user ="{}:{}".format(chat_id, chat_text)
+	with open('user_questions.txt','w',encoding = 'utf-8') as f:
+		f.write(user)
 	return ConversationHandler.END
 
 
 def get_keyboard():
 	my_keyboard = ReplyKeyboardMarkup(
-		[[KEYBOARD_BUTTON]], resize_keyboard = True)
+		[[KEYBOARD_BUTTON],['last_skill']], 
+		resize_keyboard = True
+		)
 	return my_keyboard
 
 

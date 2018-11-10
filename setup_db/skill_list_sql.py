@@ -36,8 +36,7 @@ def add_skill(skill):
 		skill['skill'], 
 		skill['link'], 
 		skill['work_count'], 
-		skill['skill_words']
-		)
+		skill['skill_words'])
 	db_session.add(skill_db)
 	db_session.commit()
 

@@ -16,7 +16,7 @@ def get_cards(link):
 	return cards
 
 
-def find_works_card(html):		#получаем ссылку, число работ
+def find_works_card(html):
 	cards = []
 	card_list = []
 	x=0
